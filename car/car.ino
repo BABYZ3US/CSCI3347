@@ -8,7 +8,7 @@
 #define IN4 11
 #define ECHO_PIN A4
 #define TRIG_PIN A5
-#define SERVO_PWM D3
+#define SERVO_PWM_PIN 3
 
 static Servo servo;
 
@@ -17,7 +17,7 @@ void setup() {
   Serial.begin(9600);
   init_motor();
   init_servo();
-  point_sensor_at(90.);
+  point_sensor_at(90.0);
 }
 
 void loop() {
@@ -31,6 +31,11 @@ void loop() {
   turnRight(150);
   delay(500);
   stop();
+  point_sensor_at(0.0);
+  delay(500);
+  point_sensor_at(90);
+  delay(500);
+  point_sensor_at(180);
   delay(1000);
 }
 
@@ -120,10 +125,19 @@ void init_motor() {
 }
 
 void init_servo() {
-  servo.attach();
+  servo.attach(SERVO_PWM_PIN);
 }
 
 //angles go from left to right (0, 180), servo may need to be repositioned on the car
 void point_sensor_at(float angle) {
   servo.write(angle);
+}
+
+bool is_obstacle(float angle, float detection_cutoff_distance) {
+  point_sensor_at(angle);
+  float distance = uss_pulse(10);
+  if distance > detection_cutoff_distance {
+    stop();
+    is_
+  }
 }
