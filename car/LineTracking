@@ -1,0 +1,139 @@
+#include <Servo.h>
+
+#define ENA 5
+#define ENB 6
+#define IN1 7
+#define IN2 8
+#define IN3 9
+#define IN4 11
+#define LT_RIGHT D10
+#define LT_MIDDL D4
+#define LT_LEFT D2
+
+static Servo servo;
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  init_motor();
+
+  pinMode(LT_RIGHT, INPUT);
+  pinMode(LT_MIDDL, INPUT);
+  pinMode(LT_LEFT, INPUT);
+}
+
+void loop() {
+  int direction = getDirection();
+  if (direction == 0){
+    moveFoward(175);
+    delay(300);
+  }
+  if (direction == -1) {
+    turnLeft(175);
+    delay(300);
+  }
+  if (direction == 1) {
+    turnRight(175);
+    delay(300);
+  }
+  if (direction == 2){
+    stop();
+    delay(3000);
+  }
+
+  }
+
+  
+void moveForward(int speed) {
+  analogWrite(ENA, speed);
+  analogWrite(ENB, speed);
+
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+}
+
+void moveBackward(int speed) {
+  analogWrite(ENA, speed);
+  analogWrite(ENB, speed);
+
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+}
+
+void turnLeft(int speed) {
+  analogWrite(ENA, speed);
+  analogWrite(ENB, speed);
+
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  
+}
+
+void turnRight(int speed) {
+  analogWrite(ENA, speed);
+  analogWrite(ENB, speed);
+
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+
+}
+
+void stop() {
+  analogWrite(ENA, 0);
+  analogWrite(ENB, 0);
+
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+}
+
+double getDirection() {
+  int left = digitalRead(LT_LEFT);
+  int middle = digitalRead(LT_MIDDL);
+  int right = digitalRead(LT_RIGHT);
+
+  if (middle == 0 && left == 1 && right == 1){
+    return 0;
+  }
+  if (left == 0 && middle == 1 && right == 1){
+    return -1;
+  }
+  if (right == 0 && left == 1 && middle == 1){
+    return 1;
+  }
+  if (middle == 1 && left == 1 && right == 1){
+    return 2;
+  }
+
+
+}
+
+void init_motor() {
+  pinMode(ENA, OUTPUT);
+  pinMode(ENB, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+
+  analogWrite(ENA, 0);
+  analogWrite(ENB, 0);
+  analogWrite(IN1, LOW);
+  analogWrite(IN2, LOW);
+  analogWrite(IN3, LOW);
+  analogWrite(IN4, LOW);
+}
