@@ -1,0 +1,105 @@
+#define ENA 5
+#define ENB 6
+#define IN1 7
+#define IN2 8
+#define IN3 9
+#define IN4 11
+
+#define SPEEDLIMIT 225
+
+
+void setup(){
+
+}
+void loop() {
+  
+}
+void chassisMove(int vf, int vr)
+{
+  int leftSpeed  = vf + vr;
+  int rightSpeed = vf - vr;
+
+  leftsideMove(leftSpeed);
+  rightsideMove(rightSpeed);
+}
+
+void leftsideMove(int speed) {
+
+  //restrain value between [-SPEEDLIMIT, SPEEDLIMIT]
+  if (speed < -SPEEDLIMIT){
+    speed = SPEEDLIMIT;
+  }
+  if (speed > SPEEDLIMIT){
+    speed = SPEEDLIMIT;
+  }
+
+  //Move the respective side of the car based on the different cases
+  if (speed > 0){
+    analogWrite(ENA, speed);
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+  }
+  if (speed == 0){
+    analogWrite(ENB, 0);
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, LOW);
+  }
+  if (speed < 0){
+     analogWrite(ENA, abs(speed));
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+  }
+}
+
+
+void rightsideMove(int speed) {
+
+  //restrain value between [-SPEEDLIMIT, SPEEDLIMIT]
+  if (speed < -SPEEDLIMIT){
+    speed = SPEEDLIMIT;
+  }
+  if (speed > SPEEDLIMIT){
+    speed = SPEEDLIMIT;
+  }
+
+  //Move the respective side of the car based on the different cases
+  if (speed > 0){
+    analogWrite(ENB, speed);
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+  }
+  if (speed == 0){
+    analogWrite(ENB, 0);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, LOW);
+  }
+  if (speed < 0){
+     analogWrite(ENB, abs(speed));
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+  }
+}
+
+void moveForward(int speed)
+{
+  leftsideMove(speed);
+  rightsideMove(speed);
+}
+
+void turnLeft(int speed)
+{
+  leftsideMove(-speed);
+  rightsideMove(speed);
+}
+
+void turnRight(int speed)
+{
+  leftsideMove(speed);
+  rightsideMove(-speed);
+}
+
+void stop()
+{
+  leftsideMove(0);
+  rightsideMove(0);
+}
